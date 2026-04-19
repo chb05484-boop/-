@@ -159,11 +159,32 @@ body{font-family:'Noto Sans Hebrew',sans-serif;background:#f5f0ff;color:var(--te
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--amber);border-radius:12px;padding:10px 20px;z-index:9999;font-size:13px;font-weight:600;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,.15);animation:slideIn .3s ease}
 .empty-state{text-align:center;padding:2.5rem;color:var(--sub)}
 .empty-icon{font-size:32px;margin-bottom:.5rem;opacity:.5}
+
+/* Dark Mode Variables */
+body.dark-mode {
+  --card: #1e1b38;
+  --border: #3d3380;
+  --sub: #9b8ec4;
+  --bg2: #2d2360;
+  --text: #ede8ff;
+  background: #141124;
+}
+
+/* Specific component overrides for dark mode */
+body.dark-mode .topbar, 
+body.dark-mode .v-box, 
+body.dark-mode .toast {
+  background: var(--card);
+}
+
+body.dark-mode .chat-box .bubble-ai {
+  background: var(--bg2);
+  color: var(--text);
+}
 </style>
 </head>
 <body>
 <div class="layout">
-  <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="s-header">
       <div class="s-logo">Vibe<span>Day</span> <span style="font-size:13px;font-weight:400;color:#7a6faa">Pro</span></div>
@@ -243,7 +264,6 @@ body{font-family:'Noto Sans Hebrew',sans-serif;background:#f5f0ff;color:var(--te
     </div>
   </div>
 
-  <!-- MAIN -->
   <div class="main">
     <div class="topbar">
       <button class="tab-btn active" onclick="switchTab('tasks',this)">📋 משימות</button>
@@ -254,7 +274,6 @@ body{font-family:'Noto Sans Hebrew',sans-serif;background:#f5f0ff;color:var(--te
       </div>
     </div>
     <div class="content">
-      <!-- TASKS -->
       <div class="panel active" id="tab-tasks">
         <div id="cinema-wrap">
           <button onclick="closeCinema()" style="position:absolute;top:10px;left:10px;z-index:10;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:30px;height:30px;cursor:pointer">✕</button>
@@ -272,7 +291,6 @@ body{font-family:'Noto Sans Hebrew',sans-serif;background:#f5f0ff;color:var(--te
         <div class="week-grid" id="week-grid"></div>
         <div id="tasks-area"></div>
       </div>
-      <!-- ANALYTICS -->
       <div class="panel" id="tab-analytics">
         <div class="a-grid">
           <div class="a-card"><div class="a-num" id="a-total" style="color:var(--accent)">0</div><div class="a-lbl">סה״כ משימות</div></div>
@@ -289,7 +307,6 @@ body{font-family:'Noto Sans Hebrew',sans-serif;background:#f5f0ff;color:var(--te
           <div id="subj-breakdown" style="display:flex;flex-direction:column;gap:7px"></div>
         </div>
       </div>
-      <!-- ACHIEVEMENTS -->
       <div class="panel" id="tab-achievements">
         <div style="margin-bottom:1rem">
           <div style="font-size:15px;font-weight:700;margin-bottom:3px">הישגים</div>
@@ -301,7 +318,6 @@ body{font-family:'Noto Sans Hebrew',sans-serif;background:#f5f0ff;color:var(--te
   </div>
 </div>
 
-<!-- VICTORY -->
 <div id="victory">
   <div class="v-box">
     <div class="v-emoji">🎉</div>
@@ -584,10 +600,19 @@ function switchTab(name,el){
 }
 
 // THEME
-function applyLightVars(){document.getElementById('theme-btn').textContent='🌙 כהה';}
+function applyLightVars(){
+  const btn = document.getElementById('theme-btn');
+  if(lightMode){
+    document.body.classList.add('dark-mode');
+    btn.textContent = '☀️ בהיר';
+  } else {
+    document.body.classList.remove('dark-mode');
+    btn.textContent = '🌙 כהה';
+  }
+}
 function toggleTheme(){
-  lightMode=!lightMode;
-  document.getElementById('theme-btn').textContent=lightMode?'🌙 כהה':'☀️ בהיר';
+  lightMode = !lightMode;
+  applyLightVars();
   saveData();
 }
 
