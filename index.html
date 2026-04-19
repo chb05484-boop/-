@@ -1,1 +1,598 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VibeDay Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Noto+Sans+Hebrew:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#7F77DD;--accent2:#a99df5;--accent3:#534AB7;
+  --card:#fff;--border:#e0d8f8;--sub:#9b8ec4;--bg2:#ede8ff;
+  --green:#2ecc71;--amber:#f0a500;--red:#e74c3c;--pink:#e056a0;
+  --text:#2d2360;--text2:#9b8ec4;--text3:#c4b8f8;
+}
+body{font-family:'Noto Sans Hebrew',sans-serif;background:#f5f0ff;color:var(--text);height:100vh;overflow:hidden}
+.layout{display:grid;grid-template-columns:280px 1fr;height:100vh}
 
+/* SIDEBAR */
+.sidebar{background:#2d2360;color:#fff;display:flex;flex-direction:column;height:100vh;border-left:1px solid #3d3380}
+.s-header{padding:1.25rem 1rem .5rem}
+.s-logo{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;margin-bottom:.6rem}
+.s-logo span{color:#b197fc}
+.user-bar{display:flex;align-items:center;gap:8px;background:#3d3380;border-radius:10px;padding:8px 10px;margin-bottom:.5rem}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--pink));display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600}
+.user-level{font-size:10px;color:var(--text3)}
+.xp-track{height:3px;background:#2d2360;border-radius:3px;margin-top:3px}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent2));border-radius:3px;transition:width .5s}
+.streak-row{display:flex;align-items:center;gap:6px;background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.2);border-radius:10px;padding:6px 10px;margin-bottom:.5rem}
+.streak-num{font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:var(--amber)}
+.pace-card{background:#3d3380;border-radius:12px;padding:10px;margin-bottom:5px}
+.pace-bar-wrap{background:#2d2360;border-radius:20px;height:10px;overflow:hidden;margin:5px 0}
+.pace-bar{height:100%;transition:width .5s}
+.stats-strip{display:flex;gap:5px;margin-bottom:5px}
+.stat-box{flex:1;background:#3d3380;border-radius:8px;padding:6px;text-align:center}
+.stat-num{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700}
+.stat-lbl{font-size:9px;color:var(--text3);margin-top:1px}
+.s-scrollable{flex:1;overflow-y:auto;padding:.5rem 1rem;display:flex;flex-direction:column;gap:.75rem}
+.s-scrollable::-webkit-scrollbar{width:4px}
+.s-scrollable::-webkit-scrollbar-thumb{background:#3d3380;border-radius:10px}
+.video-timer-card{background:linear-gradient(135deg,#534AB7,#7F77DD);border-radius:12px;padding:10px 12px;text-align:center;cursor:pointer;transition:transform .2s}
+.video-timer-card:hover{transform:scale(1.02)}
+.v-mins-num{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;display:block}
+.vid-bar-wrap{height:3px;background:rgba(255,255,255,.2);border-radius:3px;margin-top:6px}
+.vid-bar-fill{height:100%;background:#fff;border-radius:3px;transition:width .5s}
+.s-add{background:#3d3380;border-radius:12px;padding:10px}
+.form-lbl{font-size:10px;color:var(--text3);margin-bottom:4px;font-weight:600;letter-spacing:.04em}
+.s-add input,.s-add select{padding:7px 9px;border-radius:8px;border:1px solid rgba(127,119,221,.3);background:#2d2360;color:#fff;width:100%;margin-bottom:5px;font-size:11px;font-family:inherit;outline:none;transition:border-color .2s}
+.s-add input:focus,.s-add select:focus{border-color:var(--accent)}
+.s-add select option{background:#2d2360}
+.priority-row{display:flex;gap:4px;margin-bottom:5px}
+.p-btn{flex:1;padding:5px;border-radius:6px;border:1px solid #534AB7;background:transparent;font-size:10px;cursor:pointer;color:#c4b8f8;transition:all .2s;font-family:inherit}
+.p-btn.active-high{background:rgba(231,76,60,.3);border-color:var(--red);color:#ff9f96}
+.p-btn.active-mid{background:rgba(240,165,0,.3);border-color:var(--amber);color:#ffd080}
+.p-btn.active-low{background:rgba(46,204,113,.3);border-color:var(--green);color:#7fecad}
+.btn-add{width:100%;padding:8px;background:linear-gradient(135deg,var(--accent3),var(--accent));border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.s-footer{background:#2d2360;padding:.75rem 1rem 1.5rem;border-top:1px solid #3d3380}
+.music-selector{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.m-chip{padding:4px 8px;border-radius:10px;border:1px solid #534AB7;font-size:10px;cursor:pointer;background:transparent;color:#c4b8f8;transition:all .2s;font-family:inherit}
+.m-chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+#bg-player-container{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;margin-top:8px}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;height:100vh;overflow:hidden;background:#f5f0ff}
+.topbar{display:flex;align-items:center;gap:6px;padding:.6rem 1.25rem;border-bottom:1px solid var(--border);background:#fff;flex-shrink:0}
+.tab-btn{padding:6px 13px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--sub);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;transition:all .2s}
+.tab-btn.active{background:var(--bg2);color:var(--text);border-color:var(--border)}
+.topbar-right{margin-right:auto}
+.theme-btn{padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--sub);font-size:11px;cursor:pointer;font-family:inherit}
+.content{flex:1;overflow-y:auto;padding:1rem 1.25rem}
+.panel{display:none}.panel.active{display:block}
+
+/* Week */
+.week-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.btn{padding:7px 13px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;font-family:inherit}
+.week-nav .btn{background:var(--sub);font-size:11px;padding:5px 10px}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:1rem}
+.day-col{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px;min-height:90px}
+.day-col.today{border:2px solid var(--accent);background:#faf8ff}
+.mini-task{font-size:9px;border-radius:5px;padding:2px 5px;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mt-high{background:rgba(231,76,60,.12);color:#c0392b}
+.mt-mid{background:rgba(240,165,0,.12);color:#b7770d}
+.mt-low{background:rgba(46,204,113,.12);color:#1a8a4a}
+.mt-none{background:var(--bg2);color:var(--sub)}
+
+/* Task cards */
+.task-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1rem;margin-bottom:10px;transition:border-color .2s,transform .2s;animation:slideIn .3s ease}
+.task-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.task-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
+.task-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.task-meta{display:flex;gap:5px;flex-wrap:wrap}
+.badge{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600}
+.badge-high{background:rgba(231,76,60,.12);color:#c0392b}
+.badge-mid{background:rgba(240,165,0,.12);color:#b7770d}
+.badge-low{background:rgba(46,204,113,.12);color:#1a8a4a}
+.badge-subj{background:var(--bg2);color:var(--sub)}
+.badge-date{background:#f0f0f0;color:#888}
+.task-actions{display:flex;gap:5px;flex-shrink:0}
+.done-btn{padding:6px 12px;background:linear-gradient(135deg,#27ae60,var(--green));border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .2s}
+.done-btn:hover{transform:scale(1.05)}
+.del-btn{padding:6px 9px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--sub);font-size:11px;cursor:pointer;font-family:inherit;transition:all .2s}
+.del-btn:hover{border-color:var(--red);color:var(--red)}
+.subtask-row{display:flex;align-items:center;gap:7px;padding:3px 0;border-bottom:1px solid var(--border)}
+.subtask-row:last-child{border-bottom:none}
+.sub-check{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--border);background:transparent;cursor:pointer;flex-shrink:0;position:relative;transition:all .2s}
+.sub-check.checked{background:var(--accent);border-color:var(--accent)}
+.sub-check.checked::after{content:'✓';position:absolute;top:-1px;right:1px;font-size:10px;color:#fff}
+.sub-label{font-size:11px;color:var(--sub)}.sub-label.done{text-decoration:line-through;color:#bbb}
+.add-sub{display:flex;gap:5px;margin-top:5px}
+.add-sub input{flex:1;padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:#faf8ff;color:var(--text);font-size:11px;font-family:inherit;outline:none}
+.add-sub button{padding:5px 10px;border-radius:7px;border:none;background:var(--accent3);color:#fff;font-size:11px;cursor:pointer;font-family:inherit}
+.pomo-row{display:flex;align-items:center;gap:7px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.pomo-display{font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;color:var(--accent);min-width:48px}
+.pomo-btn{padding:4px 9px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--sub);font-size:11px;cursor:pointer;font-family:inherit;transition:all .2s}
+.pomo-btn:hover{background:var(--bg2)}
+.pomo-btn.running{border-color:var(--red);color:var(--red)}
+.chat-box{background:var(--bg2);border-radius:12px;padding:10px;max-height:150px;overflow-y:auto;margin:8px 0}
+.bubble-ai{background:#fff;padding:8px 10px;border-radius:10px;font-size:12px;margin-bottom:6px;color:var(--sub);line-height:1.5}
+.bubble-me{background:var(--accent);color:#fff;padding:8px 10px;border-radius:10px;font-size:12px;margin-bottom:6px;margin-right:auto;max-width:80%;width:fit-content}
+.chat-row{display:flex;gap:5px}
+.chat-row input{flex:1;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:#faf8ff;color:var(--text);font-size:12px;font-family:inherit;outline:none}
+.chat-row button{padding:7px 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+#cinema-wrap{display:none;background:#000;border-radius:16px;overflow:hidden;margin-bottom:16px;position:relative;aspect-ratio:16/9}
+.video-banner{background:#D85A30;color:#fff;padding:14px;border-radius:14px;margin-bottom:14px;display:none}
+.video-banner.show{display:flex;flex-direction:column;gap:8px}
+
+/* Analytics */
+.a-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
+.a-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem;text-align:center}
+.a-num{font-family:'Outfit',sans-serif;font-size:26px;font-weight:800}
+.a-lbl{font-size:11px;color:var(--sub);margin-top:2px}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:.75rem}
+.chart-title{font-size:13px;font-weight:700;margin-bottom:.75rem}
+.bar-chart{display:flex;align-items:flex-end;gap:7px;height:90px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--accent2),var(--accent3));min-height:4px;transition:height .6s ease}
+.bar-lbl{font-size:9px;color:var(--sub)}
+
+/* Achievements */
+.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ach-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem;text-align:center;transition:border-color .3s}
+.ach-item.unlocked{border-color:var(--amber)}
+.ach-icon{font-size:24px;margin-bottom:4px;filter:grayscale(1) opacity(.35);transition:filter .3s}
+.ach-item.unlocked .ach-icon{filter:none}
+.ach-name{font-size:10px;font-weight:600;color:var(--sub)}
+.ach-status{font-size:9px;margin-top:3px}
+
+/* Victory */
+#victory{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(3px)}
+#victory.show{display:flex}
+.v-box{background:#fff;padding:2rem;border-radius:24px;text-align:center;animation:popIn .4s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes popIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.v-emoji{font-size:44px;animation:bounce 1s infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-7px)}}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--amber);border-radius:12px;padding:10px 20px;z-index:9999;font-size:13px;font-weight:600;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,.15);animation:slideIn .3s ease}
+.empty-state{text-align:center;padding:2.5rem;color:var(--sub)}
+.empty-icon{font-size:32px;margin-bottom:.5rem;opacity:.5}
+</style>
+</head>
+<body>
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="s-header">
+      <div class="s-logo">Vibe<span>Day</span> <span style="font-size:13px;font-weight:400;color:#7a6faa">Pro</span></div>
+      <div class="user-bar">
+        <div class="avatar">🎓</div>
+        <div style="flex:1">
+          <div class="user-name" id="s-username">לומד מצטיין</div>
+          <div class="user-level" id="s-level">רמה 1 · מתחיל</div>
+          <div class="xp-track"><div class="xp-fill" id="s-xp-bar" style="width:0%"></div></div>
+        </div>
+        <div style="font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:var(--text3)" id="s-xp-num">0 XP</div>
+      </div>
+      <div class="streak-row">
+        <span style="font-size:18px">🔥</span>
+        <div>
+          <div style="font-size:9px;color:var(--text3)">סטריק יומי</div>
+          <span class="streak-num" id="s-streak">0</span>
+          <span style="font-size:10px;color:var(--text3)" id="s-streak-lbl"> ימים</span>
+        </div>
+      </div>
+      <div class="pace-card">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:#c4b8f8;margin-bottom:4px">
+          <span>התקדמות שבועית</span><span id="p-pct">0%</span>
+        </div>
+        <div class="pace-bar-wrap"><div id="p-bar" class="pace-bar" style="width:0%;background:var(--green)"></div></div>
+        <div id="p-txt" style="font-size:10px;color:#c4b8f8">מתחילים!</div>
+      </div>
+      <div class="stats-strip">
+        <div class="stat-box"><div class="stat-num" id="st-done" style="color:var(--green)">0</div><div class="stat-lbl">הושלמו</div></div>
+        <div class="stat-box"><div class="stat-num" id="st-active" style="color:var(--accent2)">0</div><div class="stat-lbl">פעילות</div></div>
+        <div class="stat-box"><div class="stat-num" id="st-xp" style="color:var(--amber)">0</div><div class="stat-lbl">XP</div></div>
+      </div>
+    </div>
+
+    <div class="s-scrollable">
+      <div class="video-timer-card" onclick="showVideoMenu()">
+        <span style="font-size:10px;opacity:.9">תקציב צפייה 🎬</span>
+        <span class="v-mins-num" id="v-count">20 דקות</span>
+        <span style="font-size:9px;opacity:.75">לחץ להמלצות</span>
+        <div class="vid-bar-wrap"><div class="vid-bar-fill" id="vid-fill" style="width:100%"></div></div>
+      </div>
+      <div class="s-add">
+        <div class="form-lbl">משימה חדשה +</div>
+        <input id="nt" placeholder="שם המשימה...">
+        <input type="date" id="nd" style="color-scheme:dark">
+        <select id="ns" onchange="checkOtherSubject()">
+          <option value="" disabled selected>בחר מקצוע...</option>
+          <option value="אינפי">אינפי</option>
+          <option value="מבנה המחשב">מבנה המחשב</option>
+          <option value="פול סטאק">פול סטאק</option>
+          <option value="מבנה נתונים">מבנה נתונים</option>
+          <option value="C++">C++</option>
+          <option value="פיזיקה">פיזיקה</option>
+          <option value="אחר">אחר (הקלד)</option>
+        </select>
+        <input id="ns-other" placeholder="מקצוע אחר..." style="display:none">
+        <div class="form-lbl" style="margin-top:3px">עדיפות:</div>
+        <div class="priority-row">
+          <button class="p-btn" onclick="setPri(this,'high')">🔴 גבוה</button>
+          <button class="p-btn active-mid" onclick="setPri(this,'mid')">🟡 בינוני</button>
+          <button class="p-btn" onclick="setPri(this,'low')">🟢 נמוך</button>
+        </div>
+        <button class="btn-add" onclick="addTask()">+ הוסף משימה</button>
+      </div>
+    </div>
+
+    <div class="s-footer">
+      <div style="font-size:10px;color:#9b8ec4;margin-bottom:8px">🎵 מוזיקת ריכוז:</div>
+      <div class="music-selector">
+        <button class="m-chip on" onclick="selectMusic(this,'Lo-fi')">Lo-fi</button>
+        <button class="m-chip" onclick="selectMusic(this,'Jazz')">Jazz</button>
+        <button class="m-chip" onclick="selectMusic(this,'Nature')">טבע</button>
+        <button class="m-chip" onclick="selectMusic(this,'Classical')">קלאסי</button>
+        <button class="m-chip" onclick="selectMusic(this,'Focus')">Focus</button>
+      </div>
+      <div id="bg-player-container"><div id="bg-player"></div></div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <button class="tab-btn active" onclick="switchTab('tasks',this)">📋 משימות</button>
+      <button class="tab-btn" onclick="switchTab('analytics',this)">📊 אנליטיקס</button>
+      <button class="tab-btn" onclick="switchTab('achievements',this)">🏆 הישגים</button>
+      <div class="topbar-right">
+        <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙 כהה</button>
+      </div>
+    </div>
+    <div class="content">
+      <!-- TASKS -->
+      <div class="panel active" id="tab-tasks">
+        <div id="cinema-wrap">
+          <button onclick="closeCinema()" style="position:absolute;top:10px;left:10px;z-index:10;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:30px;height:30px;cursor:pointer">✕</button>
+          <iframe id="c-player" width="100%" height="100%" src="" frameborder="0" allow="autoplay;encrypted-media" allowfullscreen></iframe>
+        </div>
+        <div id="v-banner" class="video-banner">
+          <div style="font-weight:700">הפסקת וידאו מומלצת:</div>
+          <div id="v-actions" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+        <div class="week-nav">
+          <button class="btn" onclick="changeWeek(-1)">❮ קודם</button>
+          <span style="font-weight:700;font-size:13px;color:var(--accent)" id="week-label">השבוע</span>
+          <button class="btn" onclick="changeWeek(1)">הבא ❯</button>
+        </div>
+        <div class="week-grid" id="week-grid"></div>
+        <div id="tasks-area"></div>
+      </div>
+      <!-- ANALYTICS -->
+      <div class="panel" id="tab-analytics">
+        <div class="a-grid">
+          <div class="a-card"><div class="a-num" id="a-total" style="color:var(--accent)">0</div><div class="a-lbl">סה״כ משימות</div></div>
+          <div class="a-card"><div class="a-num" id="a-done" style="color:var(--green)">0</div><div class="a-lbl">הושלמו</div></div>
+          <div class="a-card"><div class="a-num" id="a-xp" style="color:var(--amber)">0</div><div class="a-lbl">XP שנצבר</div></div>
+          <div class="a-card"><div class="a-num" id="a-streak" style="color:var(--pink)">0</div><div class="a-lbl">סטריק</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">פעילות שבועית</div>
+          <div class="bar-chart" id="week-chart"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">משימות לפי מקצוע</div>
+          <div id="subj-breakdown" style="display:flex;flex-direction:column;gap:7px"></div>
+        </div>
+      </div>
+      <!-- ACHIEVEMENTS -->
+      <div class="panel" id="tab-achievements">
+        <div style="margin-bottom:1rem">
+          <div style="font-size:15px;font-weight:700;margin-bottom:3px">הישגים</div>
+          <div style="font-size:12px;color:var(--sub)">השלם משימות כדי לפתוח עוד הישגים</div>
+        </div>
+        <div class="ach-grid" id="ach-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VICTORY -->
+<div id="victory">
+  <div class="v-box">
+    <div class="v-emoji">🎉</div>
+    <h2 style="font-size:20px;margin:.5rem 0">משימה הושלמה!</h2>
+    <p id="v-sub" style="color:var(--sub);font-size:13px;margin-bottom:1rem">+10 XP • +5 דקות צפייה</p>
+    <button class="btn" onclick="document.getElementById('victory').classList.remove('show')">מעולה! ✨</button>
+  </div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+// STATE
+let tasks=[], videoMins=20, weekOffset=0;
+let xp=0, streak=0, lastActive=null;
+let weekActivity=[0,0,0,0,0,0,0];
+let selectedPri='mid', ytPlayer;
+let _pomoCompleted=false, _nightWork=false, lightMode=false;
+let unlockedAch={};
+const activePomo={};
+
+const vids={'Lo-fi':'jfKfPfyJRdk','Jazz':'Dx5qFachd3A','Nature':'eKFTSSKCzWA','Classical':'mIYzp5rcTvU','Focus':'4xDzrrm1vbc'};
+const videoPool=[
+  {id:'jfKfPfyJRdk',title:"Lo-fi chill ☕"},
+  {id:'Dx5qFachd3A',title:"ג'אז רגוע 🎷"},
+  {id:'mIYzp5rcTvU',title:"טיפ אינפי 📐"},
+  {id:'4xDzrrm1vbc',title:"פרודוקטיביות 🧠"},
+  {id:'eKFTSSKCzWA',title:"צלילי טבע 🌿"}
+];
+const LEVELS=[{min:0,name:'מתחיל'},{min:50,name:'לומד'},{min:150,name:'מיומן'},{min:300,name:'מתקדם'},{min:500,name:'מצטיין'},{min:800,name:'אלוף'}];
+const ACHIEVEMENTS=[
+  {id:'first',icon:'⭐',name:'הגשה ראשונה',check:()=>tasks.filter(t=>t.done).length>=1},
+  {id:'five', icon:'🌟',name:'5 משימות',   check:()=>tasks.filter(t=>t.done).length>=5},
+  {id:'ten',  icon:'💫',name:'10 משימות',  check:()=>tasks.filter(t=>t.done).length>=10},
+  {id:'str3', icon:'🔥',name:'3 ימים רצופים',check:()=>streak>=3},
+  {id:'str7', icon:'🌋',name:'שבוע שלם',   check:()=>streak>=7},
+  {id:'xp100',icon:'💎',name:'100 XP',      check:()=>xp>=100},
+  {id:'xp500',icon:'👑',name:'500 XP',      check:()=>xp>=500},
+  {id:'pomo', icon:'🍅',name:'פומודורו ראשון',check:()=>_pomoCompleted},
+  {id:'night',icon:'🌙',name:'עבודת לילה', check:()=>_nightWork}
+];
+
+// YOUTUBE (original working)
+function onYouTubeIframeAPIReady(){
+  ytPlayer=new YT.Player('bg-player',{
+    height:'100%',width:'100%',videoId:vids['Lo-fi'],
+    playerVars:{autoplay:0,controls:1,loop:1,playlist:vids['Lo-fi']}
+  });
+}
+function selectMusic(el,name){
+  document.querySelectorAll('.m-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  if(ytPlayer&&ytPlayer.loadVideoById) ytPlayer.loadVideoById({videoId:vids[name],startSeconds:0});
+}
+
+// PERSISTENCE
+function loadData(){
+  try{
+    const d=JSON.parse(localStorage.getItem('vday_pro4')||'{}');
+    tasks=d.tasks||[]; videoMins=d.videoMins??20; xp=d.xp||0;
+    streak=d.streak||0; lastActive=d.lastActive||null;
+    weekActivity=d.weekActivity||[0,0,0,0,0,0,0];
+    unlockedAch=d.unlockedAch||{};
+    _pomoCompleted=d._pomoCompleted||false; _nightWork=d._nightWork||false;
+    lightMode=d.lightMode||false;
+    if(lightMode) applyLightVars();
+  }catch(e){}
+}
+function saveData(){
+  localStorage.setItem('vday_pro4',JSON.stringify({tasks,videoMins,xp,streak,lastActive,weekActivity,unlockedAch,_pomoCompleted,_nightWork,lightMode}));
+}
+
+// STREAK
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function updateStreak(){
+  const today=todayStr(); if(lastActive===today)return;
+  const y=new Date(); y.setDate(y.getDate()-1);
+  const ys=y.getFullYear()+'-'+String(y.getMonth()+1).padStart(2,'0')+'-'+String(y.getDate()).padStart(2,'0');
+  streak=(lastActive===ys)?streak+1:1;
+  lastActive=today;
+  if(new Date().getHours()>=22) _nightWork=true;
+}
+
+// RENDER ALL
+function renderAll(){
+  // sidebar
+  const done=tasks.filter(t=>t.done).length, active=tasks.filter(t=>!t.done).length, total=tasks.length;
+  const pct=total>0?Math.round((done/total)*100):0;
+  document.getElementById('p-bar').style.width=pct+'%';
+  document.getElementById('p-pct').textContent=pct+'%';
+  document.getElementById('p-txt').textContent=pct>=70?'קצב מעולה!':pct>=30?'בדרך הנכונה':'בואי נתחיל';
+  document.getElementById('st-done').textContent=done;
+  document.getElementById('st-active').textContent=active;
+  document.getElementById('st-xp').textContent=xp;
+  document.getElementById('s-streak').textContent=streak;
+  document.getElementById('s-streak-lbl').textContent=streak===1?' יום':' ימים';
+  const li=LEVELS.reduce((b,l,i)=>xp>=l.min?i:b,0);
+  const nl=LEVELS[li+1];
+  document.getElementById('s-level').textContent=`רמה ${li+1} · ${LEVELS[li].name}`;
+  document.getElementById('s-xp-num').textContent=xp+' XP';
+  document.getElementById('s-xp-bar').style.width=(nl?Math.min(100,Math.round(((xp-LEVELS[li].min)/(nl.min-LEVELS[li].min))*100)):100)+'%';
+  // video
+  document.getElementById('v-count').textContent=videoMins+' דקות';
+  document.getElementById('vid-fill').style.width=Math.min(100,(videoMins/60)*100)+'%';
+  renderWeek(); renderTasks(); renderAnalytics(); renderAchievements();
+  saveData();
+}
+
+// WEEK
+function changeWeek(d){weekOffset+=d;renderWeek();}
+function renderWeek(){
+  const g=document.getElementById('week-grid'); g.innerHTML='';
+  const lbl=weekOffset===0?'השבוע':weekOffset<0?Math.abs(weekOffset)+' שבועות אחורה':weekOffset+' שבועות קדימה';
+  document.getElementById('week-label').textContent=lbl;
+  for(let i=0;i<7;i++){
+    const d=new Date(); d.setDate(d.getDate()+i+(weekOffset*7));
+    const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const label=d.toLocaleDateString('he-IL',{weekday:'short',day:'numeric',month:'numeric'});
+    const col=document.createElement('div');
+    col.className='day-col'+(i===0&&weekOffset===0?' today':'');
+    col.innerHTML=`<div style="font-size:9px;font-weight:700;color:var(--sub);text-align:center;margin-bottom:4px">${label}</div>`;
+    tasks.filter(t=>t.day===ds&&!t.done).forEach(t=>{
+      const m=document.createElement('div'); m.className='mini-task mt-'+(t.priority||'none'); m.textContent=t.title; col.appendChild(m);
+    });
+    g.appendChild(col);
+  }
+}
+
+// ADD TASK
+function addTask(){
+  const t=document.getElementById('nt').value.trim(), d=document.getElementById('nd').value;
+  if(!t||!d)return;
+  let subj=document.getElementById('ns').value;
+  if(subj==='אחר') subj=document.getElementById('ns-other').value||'כללי';
+  else if(!subj) subj='כללי';
+  tasks.push({id:Date.now(),title:t,day:d,subject:subj,priority:selectedPri,done:false,subtasks:[],chat:[]});
+  document.getElementById('nt').value='';
+  document.getElementById('ns').selectedIndex=0;
+  document.getElementById('ns-other').style.display='none';
+  renderAll();
+}
+function checkOtherSubject(){
+  const s=document.getElementById('ns'),o=document.getElementById('ns-other');
+  o.style.display=s.value==='אחר'?'block':'none';
+}
+function setPri(el,pri){
+  document.querySelectorAll('.p-btn').forEach(b=>{b.className='p-btn';});
+  el.classList.add('active-'+pri); selectedPri=pri;
+}
+
+// RENDER TASKS
+function renderTasks(){
+  const area=document.getElementById('tasks-area'); area.innerHTML='';
+  const active=tasks.filter(t=>!t.done);
+  if(active.length===0){area.innerHTML='<div class="empty-state"><div class="empty-icon">✨</div><div>אין משימות פעילות<br>הוסף משימה מהסרגל הצדדי</div></div>';return;}
+  active.sort((a,b)=>({'high':0,'mid':1,'low':2}[a.priority]||1)-({'high':0,'mid':1,'low':2}[b.priority]||1));
+  active.forEach(t=>{
+    const i=tasks.indexOf(t), fd=t.day.split('-').reverse().join('/');
+    const priLabel={'high':'🔴 גבוה','mid':'🟡 בינוני','low':'🟢 נמוך'}[t.priority]||'';
+    const subHtml=t.subtasks.map((s,si)=>`<div class="subtask-row"><div class="sub-check ${s.done?'checked':''}" onclick="toggleSub(${i},${si})"></div><span class="sub-label ${s.done?'done':''}">${s.text}</span></div>`).join('');
+    const chatHtml=['<div class="bubble-ai">היי, מה נפתור ב-'+t.subject+'?</div>',...t.chat.map(m=>m.role==='user'?'<div class="bubble-me">'+m.text+'</div>':'<div class="bubble-ai">'+m.text+(m.links?'<div style="display:flex;gap:5px;margin-top:4px"><button class="btn" style="font-size:10px;padding:4px 8px;background:#4285f4" onclick="window.open(\'https://gemini.google.com/app?q='+encodeURIComponent(m.q)+'\',\'_blank\')">Gemini</button><button class="btn" style="font-size:10px;padding:4px 8px;background:#10a37f" onclick="window.open(\'https://chatgpt.com/?q='+encodeURIComponent(m.q)+'\',\'_blank\')">GPT</button></div>':'')+'</div>')].join('');
+    const card=document.createElement('div'); card.className='task-card';
+    card.innerHTML=`<div class="task-header"><div><div class="task-title">${t.title}</div><div class="task-meta"><span class="badge badge-${t.priority||'mid'}">${priLabel}</span><span class="badge badge-subj">${t.subject}</span><span class="badge badge-date">📅 ${fd}</span></div></div><div class="task-actions"><button class="done-btn" onclick="doneTask(${i})">✓ סיימתי!</button><button class="del-btn" onclick="delTask(${i})">🗑</button></div></div><div id="subs-${i}">${subHtml}</div><div class="add-sub"><input id="sub-${i}" placeholder="הוסף תת-משימה..." onkeydown="if(event.key==='Enter')addSub(${i})"><button onclick="addSub(${i})">+</button></div><div class="pomo-row"><span style="font-size:12px">🍅</span><span class="pomo-display" id="pomo-${i}">25:00</span><button class="pomo-btn" id="pomo-btn-${i}" onclick="togglePomo(${i})">התחל</button><button class="pomo-btn" onclick="resetPomo(${i})">איפוס</button></div><div class="chat-box" id="chat-${i}">${chatHtml}</div><div class="chat-row"><input id="in-${i}" placeholder="שאל משהו על ${t.subject}..." onkeydown="if(event.key==='Enter')sendChat(${i})"><button onclick="sendChat(${i})">שאל →</button></div>`;
+    area.appendChild(card);
+  });
+}
+
+function doneTask(i){
+  tasks[i].done=true;
+  const gain={'high':20,'mid':10,'low':5}[tasks[i].priority]||10;
+  xp+=gain; videoMins+=5;
+  weekActivity[new Date().getDay()]=(weekActivity[new Date().getDay()]||0)+1;
+  document.getElementById('v-sub').textContent='+'+gain+' XP • +5 דקות צפייה 🎬';
+  document.getElementById('victory').classList.add('show');
+  checkAchievements(); renderAll();
+}
+function delTask(i){tasks.splice(i,1);renderAll();}
+function addSub(i){const inp=document.getElementById('sub-'+i),v=inp.value.trim();if(!v)return;tasks[i].subtasks.push({text:v,done:false});inp.value='';renderTasks();saveData();}
+function toggleSub(ti,si){tasks[ti].subtasks[si].done=!tasks[ti].subtasks[si].done;renderTasks();saveData();}
+
+// CHAT
+function sendChat(i){
+  const inp=document.getElementById('in-'+i),v=inp.value.trim();if(!v)return;
+  tasks[i].chat.push({role:'user',text:v});
+  tasks[i].chat.push({role:'ai',text:'בואו נשאל AI על "'+v+'":',links:true,q:v});
+  inp.value=''; renderTasks();
+  const box=document.getElementById('chat-'+i); if(box) box.scrollTop=box.scrollHeight;
+  saveData();
+}
+
+// POMODORO
+function togglePomo(i){
+  if(activePomo[i]){
+    clearInterval(activePomo[i].interval); delete activePomo[i];
+    const b=document.getElementById('pomo-btn-'+i); if(b){b.textContent='המשך';b.classList.remove('running');}
+  } else {
+    activePomo[i]={remaining:25*60};
+    activePomo[i].interval=setInterval(()=>{
+      activePomo[i].remaining--;
+      const el=document.getElementById('pomo-'+i); if(el) el.textContent=fmt(activePomo[i].remaining);
+      if(activePomo[i].remaining<=0){
+        clearInterval(activePomo[i].interval); delete activePomo[i];
+        _pomoCompleted=true; xp+=5; showToast('🍅 פומודורו הושלם! +5 XP'); checkAchievements(); renderAll();
+      }
+    },1000);
+    const b=document.getElementById('pomo-btn-'+i); if(b){b.textContent='עצור';b.classList.add('running');}
+  }
+}
+function resetPomo(i){
+  if(activePomo[i]){clearInterval(activePomo[i].interval);delete activePomo[i];}
+  const el=document.getElementById('pomo-'+i),b=document.getElementById('pomo-btn-'+i);
+  if(el) el.textContent='25:00'; if(b){b.textContent='התחל';b.classList.remove('running');}
+}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+
+// VIDEO (original)
+function showVideoMenu(){
+  if(videoMins<=0){alert('התקציב נגמר! השלם משימות לקבלת זמן נוסף.');return;}
+  const list=document.getElementById('v-actions'); list.innerHTML='';
+  videoPool.sort(()=>0.5-Math.random()).slice(0,3).forEach(v=>{
+    const b=document.createElement('button'); b.className='btn'; b.style.fontSize='11px';
+    b.textContent=v.title; b.onclick=()=>openCinema(v.id); list.appendChild(b);
+  });
+  document.getElementById('v-banner').classList.add('show');
+}
+function openCinema(id){
+  if(videoMins<5)return;
+  videoMins-=5;
+  document.getElementById('c-player').src='https://www.youtube.com/embed/'+id+'?autoplay=1';
+  document.getElementById('cinema-wrap').style.display='block';
+  document.getElementById('v-banner').classList.remove('show');
+  if(ytPlayer&&ytPlayer.pauseVideo) ytPlayer.pauseVideo();
+  renderAll();
+}
+function closeCinema(){document.getElementById('c-player').src='';document.getElementById('cinema-wrap').style.display='none';}
+
+// ANALYTICS
+function renderAnalytics(){
+  const done=tasks.filter(t=>t.done).length,total=tasks.length;
+  document.getElementById('a-total').textContent=total;
+  document.getElementById('a-done').textContent=done;
+  document.getElementById('a-xp').textContent=xp;
+  document.getElementById('a-streak').textContent=streak;
+  const chart=document.getElementById('week-chart'); chart.innerHTML='';
+  const days=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'],maxV=Math.max(...weekActivity,1);
+  weekActivity.forEach((v,i)=>{
+    const col=document.createElement('div'); col.className='bar-col';
+    col.innerHTML='<div class="bar" style="height:'+Math.max(4,Math.round((v/maxV)*86))+'px"></div><div class="bar-lbl">'+days[i]+'</div>';
+    chart.appendChild(col);
+  });
+  const bd=document.getElementById('subj-breakdown'); bd.innerHTML='';
+  const counts={};
+  tasks.filter(t=>t.done).forEach(t=>{counts[t.subject]=(counts[t.subject]||0)+1;});
+  const entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length){bd.innerHTML='<div style="color:var(--sub);font-size:12px;text-align:center;padding:.5rem">השלם משימות כדי לראות נתונים</div>';return;}
+  entries.forEach(([subj,cnt])=>{
+    const pct=done>0?Math.round((cnt/done)*100):0;
+    bd.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>'+subj+'</span><span style="color:var(--sub)">'+cnt+' משימות</span></div><div style="height:6px;background:var(--bg2);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent3),var(--accent2));border-radius:4px;transition:width .6s"></div></div></div>';
+  });
+}
+
+// ACHIEVEMENTS
+function checkAchievements(){
+  ACHIEVEMENTS.forEach(a=>{if(!unlockedAch[a.id]&&a.check()){unlockedAch[a.id]=true;setTimeout(()=>showToast('🏆 הישג חדש: '+a.name+' '+a.icon),600);}});
+}
+function renderAchievements(){
+  const g=document.getElementById('ach-grid'); g.innerHTML='';
+  ACHIEVEMENTS.forEach(a=>{
+    const u=!!unlockedAch[a.id];
+    g.innerHTML+='<div class="ach-item '+(u?'unlocked':'')+'"><div class="ach-icon">'+a.icon+'</div><div class="ach-name">'+a.name+'</div><div class="ach-status" style="color:'+(u?'var(--amber)':'#bbb')+'">'+(u?'פתוח!':'נעול')+'</div></div>';
+  });
+}
+
+// TOAST
+function showToast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
+
+// TABS
+function switchTab(name,el){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+name).classList.add('active');
+}
+
+// THEME
+function applyLightVars(){document.getElementById('theme-btn').textContent='🌙 כהה';}
+function toggleTheme(){
+  lightMode=!lightMode;
+  document.getElementById('theme-btn').textContent=lightMode?'🌙 כהה':'☀️ בהיר';
+  saveData();
+}
+
+// BOOT
+loadData(); updateStreak(); renderAll();
+</script>
+</body>
+</html>
